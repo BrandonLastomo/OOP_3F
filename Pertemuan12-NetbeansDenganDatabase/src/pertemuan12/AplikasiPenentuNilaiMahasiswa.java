@@ -31,9 +31,11 @@ public class AplikasiPenentuNilaiMahasiswa extends javax.swing.JFrame {
         tabelMahasiswa.setModel(model);
     }
 
+    // read
     private void getDatas() {
         model.setRowCount(0);
         try {
+            // masukin data dari arraylist yang isinya data dari db
             List<Mahasiswa> list = MahasiswaDAO.getAll();
             for (Mahasiswa m : list) {
                 model.addRow(new Object[]{
@@ -46,8 +48,10 @@ public class AplikasiPenentuNilaiMahasiswa extends javax.swing.JFrame {
         }
     }
 
+    // create
     private void addDatas() {
         try {
+            // ambil data dan proses
             parseInputsToNilaiMhs();
             double rata = nm.nilaiRata();
             char grade = nm.gradeMhs();
@@ -57,7 +61,11 @@ public class AplikasiPenentuNilaiMahasiswa extends javax.swing.JFrame {
                 nameInput.getText(),
                 nm.tugas, nm.uts, nm.uas, rata, grade, hasil
             );
+            
+            // tambah ke db
             MahasiswaDAO.insert(m);
+            
+            // tampilin data
             getDatas();
             bersihkanForm();
             JOptionPane.showMessageDialog(this, "Data berhasil ditambahkan.");
@@ -68,13 +76,16 @@ public class AplikasiPenentuNilaiMahasiswa extends javax.swing.JFrame {
         }
     }
 
+    // update
     private void updateData() {
+        // ambil baris yang mau diupdate
         int row = tabelMahasiswa.getSelectedRow();
         if (row == -1) {
             JOptionPane.showMessageDialog(this, "Pilih data yang ingin diupdate!");
             return;
         }
         try {
+            // ambil data dan proses
             int id = Integer.parseInt(model.getValueAt(row, 0).toString());
             parseInputsToNilaiMhs();
             double rata = nm.nilaiRata();
@@ -85,7 +96,11 @@ public class AplikasiPenentuNilaiMahasiswa extends javax.swing.JFrame {
                 nameInput.getText(),
                 nm.tugas, nm.uts, nm.uas, rata, grade, hasil
             );
+            
+            // update data di db
             MahasiswaDAO.update(id, m);
+            
+            // tampilin data
             getDatas();
             bersihkanForm();
             JOptionPane.showMessageDialog(this, "Data berhasil diupdate.");
@@ -97,6 +112,7 @@ public class AplikasiPenentuNilaiMahasiswa extends javax.swing.JFrame {
     }
 
     private void deleteData() {
+        // ambil baris yang mau dihapus
         int row = tabelMahasiswa.getSelectedRow();
         if (row == -1) {
             JOptionPane.showMessageDialog(this, "Pilih data yang ingin dihapus!");
@@ -106,8 +122,11 @@ public class AplikasiPenentuNilaiMahasiswa extends javax.swing.JFrame {
         if (confirm != JOptionPane.YES_OPTION) return;
 
         try {
+            // ambil id
             int id = Integer.parseInt(model.getValueAt(row, 0).toString());
+            // hapus data dari db
             MahasiswaDAO.delete(id);
+            // tampilin data
             getDatas();
             bersihkanForm();
             JOptionPane.showMessageDialog(this, "Data berhasil dihapus.");
@@ -117,6 +136,7 @@ public class AplikasiPenentuNilaiMahasiswa extends javax.swing.JFrame {
     }
 
     private void parseInputsToNilaiMhs() {
+        // type casting dari string ke double
         nm.tugas = Double.parseDouble(tugasInput.getText());
         nm.uts = Double.parseDouble(UTSInput.getText());
         nm.uas = Double.parseDouble(UASInput.getText());
@@ -130,9 +150,10 @@ public class AplikasiPenentuNilaiMahasiswa extends javax.swing.JFrame {
         tabelMahasiswa.clearSelection();
     }
 
-    private void selectData() {
-        int row = tabelMahasiswa.getSelectedRow();
-        if (row != -1) {
+    private void selectData() { // ketika pilih/klik baris, otomatis isi input
+        int row = tabelMahasiswa.getSelectedRow(); // ambil baris
+        if (row != -1) { // kalo barisnya ada isinya
+            // isi input dengan data dari baris yang dipilih
             nameInput.setText(model.getValueAt(row, 1).toString());
             tugasInput.setText(model.getValueAt(row, 2).toString());
             UTSInput.setText(model.getValueAt(row, 3).toString());
@@ -361,7 +382,6 @@ public class AplikasiPenentuNilaiMahasiswa extends javax.swing.JFrame {
 
     private void simpanBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simpanBtnActionPerformed
         // TODO add your handling code here:                                      
-        getDatas();
     }//GEN-LAST:event_simpanBtnActionPerformed
 
     private void tabelMahasiswaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelMahasiswaMouseClicked
